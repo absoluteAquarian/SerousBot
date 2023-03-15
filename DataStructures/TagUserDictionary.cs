@@ -2,21 +2,13 @@
 using System.Collections.Generic;
 
 namespace SerousBot.DataStructures {
-	public class TagUserDictionary : Dictionary<string, TagNameDictionary> {
+	public class TagUserDictionary : Dictionary<ulong, TagNameDictionary> {
 		public TagGuildDictionary Parent;
 
 		public TagNameDictionary this[SocketUser user] {
-			get => this[user.Id.ToString()];
+			get => this[user.Id];
 			set {
-				this[user.Id.ToString()] = value;
-				value.Parent = this;
-			}
-		}
-
-		public TagNameDictionary this[ulong userID] {
-			get => this[userID.ToString()];
-			set {
-				this[userID.ToString()] = value;
+				this[user.Id] = value;
 				value.Parent = this;
 			}
 		}

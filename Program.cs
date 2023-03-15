@@ -2,10 +2,10 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using SerousBot.Commands;
+using SerousBot.Commands.Modules;
 using SerousBot.Utility;
 using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SerousBot {
@@ -23,16 +23,25 @@ namespace SerousBot {
 		private CommandHandler commands;
 
 		// TODO: configuration for the token and prefix perhaps?
-		public const char Prefix = '?';
+		public static char Prefix = '?';
 
 		public async Task Run() {
 			client = new DiscordSocketClient();
 
 			client.Log += Logging.Log;
-			client.Ready += () => {
+			client.Ready += async () => {
 				Logging.WriteLine($"Successfully connected as \"{client.CurrentUser}\"", ConsoleColor.Green);
-				return Task.CompletedTask;
+
+				string pfxFile = "prefix.txt";
+				if (File.Exists(pfxFile))
+					Prefix = File.ReadAllText(pfxFile)[0];
+
+				Logging.WriteLine($"Prefix initialized as \"{Prefix}\"");
+
+				await Task.CompletedTask;
 			};
+
+			client.ReactionAdded += ReactionAdded;
 
 			//Initialize the commands handler
 			commands = new CommandHandler(client, new CommandService(new CommandServiceConfig() {
@@ -54,6 +63,15 @@ namespace SerousBot {
 				if (request == "exit") {
 					Environment.Exit(0);
 					return;
+				}
+			}
+		}
+
+		private async Task ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction) {
+			if (TagModule.DeleteableTags.TryGetValue(message.Id, out (ulong, ulong) originalMessageAuthorAndMessage) && reaction.User.Value is SocketGuildUser reactionUser) {
+				if (originalMessageAuthorAndMessage.Item1 == reactionUser.Id && reaction.Emote.Equals(new Emoji("❌"))) {
+					TagModule.DeleteableTags.Remove(message.Id);
+					await (await message.GetOrDownloadAsync()).DeleteAsync();
 				}
 			}
 		}
