@@ -14,8 +14,7 @@ namespace SerousBot {
 			try {
 				new Program().Run().GetAwaiter().GetResult();
 			} catch (Exception ex) {
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine(ex.ToString());
+				Logging.WriteLine(ex.ToString(), ConsoleColor.Red);
 			}
 		}
 
@@ -51,7 +50,7 @@ namespace SerousBot {
 			await commands.InstallCommandsAsync();
 
 			//Start the client session
-			await client.LoginAsync(TokenType.Bot, File.ReadAllText("token.txt"));
+			await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("SerousBotToken"));
 			await client.StartAsync();
 
 			//Loop infinitely until an unhandled exception has occurred OR the console was prompted with "exit"
