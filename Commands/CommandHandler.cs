@@ -102,7 +102,7 @@ namespace SerousBot.Commands {
 
 			var attachents = message.Attachments;
 			if (attachents.Count == 1 && attachents.ElementAt(0) is Attachment attachment) {
-				if ((attachment.Filename.EndsWith(".log") || attachment.Filename.EndsWith(".cs") || attachment.Filename.EndsWith(".json") || attachment.Filename == "message.txt") && attachment.Size < 100000) {
+				if ((attachment.Filename.EndsWith(".log") || attachment.Filename.EndsWith(".cs") || attachment.Filename.EndsWith(".json") || attachment.Filename == "message.txt") && attachment.Size < 400000) {
 					using (var client = new HttpClient())
 						contents = await client.GetStringAsync(attachment.Url);
 
