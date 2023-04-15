@@ -106,7 +106,7 @@ namespace SerousBot.Commands {
 
 				const int MAX_ATTACHMENT_SIZE = 400000;
 
-				if (attachment.Filename.EndsWith(".log") || attachment.Filename.EndsWith(".cs") || attachment.Filename.EndsWith(".json") || attachment.Filename == "message.txt") {
+				if (attachment.Filename.EndsWith(".log") || attachment.Filename.EndsWith(".cs") || attachment.Filename.EndsWith(".json") || attachment.Filename.EndsWith(".txt")) {
 					if (attachment.Size < MAX_ATTACHMENT_SIZE) {
 						using (var client = new HttpClient())
 							contents = await client.GetStringAsync(attachment.Url);
