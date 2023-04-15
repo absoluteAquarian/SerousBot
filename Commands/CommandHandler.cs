@@ -102,12 +102,19 @@ namespace SerousBot.Commands {
 
 			var attachents = message.Attachments;
 			if (attachents.Count == 1 && attachents.ElementAt(0) is Attachment attachment) {
-				if ((attachment.Filename.EndsWith(".log") || attachment.Filename.EndsWith(".cs") || attachment.Filename.EndsWith(".json") || attachment.Filename == "message.txt") && attachment.Size < 400000) {
-					using (var client = new HttpClient())
-						contents = await client.GetStringAsync(attachment.Url);
+				Console.WriteLine($"Attempting auto-paste for attachment \"{attachment.Filename}\" from user \"{message.Author.Username}\"...");
 
-					shouldHastebin = true;
-					extra = $" `({attachment.Filename})`";
+				const int MAX_ATTACHMENT_SIZE = 400000;
+
+				if (attachment.Filename.EndsWith(".log") || attachment.Filename.EndsWith(".cs") || attachment.Filename.EndsWith(".json") || attachment.Filename == "message.txt") {
+					if (attachment.Size < MAX_ATTACHMENT_SIZE) {
+						using (var client = new HttpClient())
+							contents = await client.GetStringAsync(attachment.Url);
+
+						shouldHastebin = true;
+						extra = $" `({attachment.Filename})`";
+					} else
+						Logging.WriteLine($"Could not auto-paste file \"{attachment.Filename}\", size exceeded maximum ({attachment.Size} > {MAX_ATTACHMENT_SIZE})", ConsoleColor.Red);
 				}
 			}
 
@@ -123,6 +130,8 @@ namespace SerousBot.Commands {
 				if (count > 1 && message.Content.Split('\n').Length > 16) {
 					shouldHastebin = true;
 					autoDeleteUserMessage = true;
+
+					Console.WriteLine($"Large code block detected from user \"{message.Author.Username}\".  Attempting auto-paste...");
 				}
 			}
 
@@ -147,6 +156,7 @@ namespace SerousBot.Commands {
 
 					if (!match.Success) {
 						// hastebin down?
+						Logging.WriteLine("Auto-paste failed", ConsoleColor.Red);
 						return;
 					}
 
@@ -154,6 +164,8 @@ namespace SerousBot.Commands {
 					await context.Channel.SendMessageAsync($"Automatic Hastebin for {message.Author.Username}{extra}: {hasteUrl}");
 					if (autoDeleteUserMessage)
 						await message.DeleteAsync();
+
+					Logging.WriteLine("Auto-paste succeeded", ConsoleColor.Green);
 				}
 			}
 		}
