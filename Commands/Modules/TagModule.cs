@@ -59,7 +59,7 @@ namespace SerousBot.Commands.Modules {
 
 		private static readonly object addLock = new object();
 
-		internal static readonly Dictionary<ulong, (ulong, ulong)> DeleteableTags = new Dictionary<ulong, (ulong, ulong)>(); // bot message id, <requester user id, original request message>
+		internal static readonly Dictionary<ulong, CommandMessageReactionInfo> DeleteableTags = new Dictionary<ulong, CommandMessageReactionInfo>(); // bot message id, requester id/message
 
 		private static bool ValidTagName(string name) => Format.Sanitize(name) == name && !name.Contains(" ");
 
@@ -152,7 +152,7 @@ namespace SerousBot.Commands.Modules {
 
 			await msg.AddReactionAsync(new Emoji("❌"));
 			await Context.Message.DeleteAsync();
-			DeleteableTags.Add(msg.Id, (Context.Message.Author.Id, Context.Message.Id));
+			DeleteableTags.Add(msg.Id, new CommandMessageReactionInfo(Context.Message.Author.Id, Context.Message.Id));
 		}
 
 		[Command("edit")]

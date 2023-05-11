@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using SerousBot.Commands;
 using SerousBot.Commands.Modules;
+using SerousBot.DataStructures;
 using SerousBot.Utility;
 using System;
 using System.IO;
@@ -67,8 +68,8 @@ namespace SerousBot {
 		}
 
 		private async Task ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction) {
-			if (TagModule.DeleteableTags.TryGetValue(message.Id, out (ulong, ulong) originalMessageAuthorAndMessage) && reaction.User.Value is SocketGuildUser reactionUser) {
-				if (originalMessageAuthorAndMessage.Item1 == reactionUser.Id && reaction.Emote.Equals(new Emoji("❌"))) {
+			if (TagModule.DeleteableTags.TryGetValue(message.Id, out CommandMessageReactionInfo originalMessageAuthorAndMessage) && reaction.User.Value is SocketGuildUser reactionUser) {
+				if (originalMessageAuthorAndMessage.user == reactionUser.Id && reaction.Emote.Equals(new Emoji("❌"))) {
 					TagModule.DeleteableTags.Remove(message.Id);
 					await (await message.GetOrDownloadAsync()).DeleteAsync();
 				}

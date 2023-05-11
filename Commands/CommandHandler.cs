@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using SerousBot.Commands.Modules;
+using SerousBot.DataStructures;
 using SerousBot.Utility;
 using System;
 using System.Linq;
@@ -182,7 +183,7 @@ namespace SerousBot.Commands {
 							$"\n{tag.text}");
 
 						await msg.AddReactionAsync(new Emoji("❌"));
-						TagModule.DeleteableTags.Add(msg.Id, (context.Message.Author.Id, context.Message.Id));
+						TagModule.DeleteableTags.Add(msg.Id, new CommandMessageReactionInfo(context.Message.Author.Id, context.Message.Id));
 						await context.Message.DeleteAsync();
 						return new ExecuteResult();
 					} else {
