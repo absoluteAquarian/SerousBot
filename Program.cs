@@ -2,8 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using SerousBot.Commands;
-using SerousBot.Commands.Modules;
-using SerousBot.DataStructures;
 using SerousBot.Utility;
 using System;
 using System.IO;
@@ -12,20 +10,26 @@ using System.Threading.Tasks;
 namespace SerousBot {
 	public class Program {
 		public static void Main() {
-			try {
-				new Program().Run().GetAwaiter().GetResult();
-			} catch (Exception ex) {
-				Logging.WriteLine(ex.ToString(), ConsoleColor.Red);
+			while (true) {
+				try {
+					Run().GetAwaiter().GetResult();
+				} catch (Exception ex) {
+					Logging.WriteLine(ex.ToString(), ConsoleColor.Red);
+
+					// Forcibly stop the client if it's still running
+					client?.StopAsync().GetAwaiter().GetResult();
+					client = null;
+				}
 			}
 		}
 
-		private DiscordSocketClient client;
-		private CommandHandler commands;
+		private static DiscordSocketClient client;
+		private static CommandHandler commands;
 
 		// TODO: configuration for the token and prefix perhaps?
 		public static char Prefix = '?';
 
-		public async Task Run() {
+		public static async Task Run() {
 			client = new DiscordSocketClient();
 
 			client.Log += Logging.Log;
@@ -40,8 +44,6 @@ namespace SerousBot {
 
 				await Task.CompletedTask;
 			};
-
-			client.ReactionAdded += ReactionAdded;
 
 			//Initialize the commands handler
 			commands = new CommandHandler(client, new CommandService(new CommandServiceConfig() {
@@ -63,15 +65,6 @@ namespace SerousBot {
 				if (request == "exit") {
 					Environment.Exit(0);
 					return;
-				}
-			}
-		}
-
-		private async Task ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction) {
-			if (TagModule.DeleteableTags.TryGetValue(message.Id, out CommandMessageReactionInfo originalMessageAuthorAndMessage) && reaction.User.Value is SocketGuildUser reactionUser) {
-				if (originalMessageAuthorAndMessage.user == reactionUser.Id && reaction.Emote.Equals(new Emoji("❌"))) {
-					TagModule.DeleteableTags.Remove(message.Id);
-					await (await message.GetOrDownloadAsync()).DeleteAsync();
 				}
 			}
 		}
