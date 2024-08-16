@@ -1,0 +1,15 @@
+﻿{
+	"name": "Magic Storage",
+	"authors": [
+		"absoluteAquarian"
+	],
+	"steamid": 2563309347,
+	"dependencies": [
+		"SerousCommonLib"
+	],
+	"description": [
+		"This mod adds content for easy mass storage of items within a small area, as well as crafting using items from that storage.",
+		"Storage Units, which contain the items, can be upgraded to hold more items as the player obtains better resources.",
+		"The mod also adds a helpful town NPC, the **Automaton**, which provides many tips for how the tiles, items, etc. in the mod work."
+	]
+}

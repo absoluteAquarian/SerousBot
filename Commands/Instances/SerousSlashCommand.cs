@@ -34,11 +34,15 @@ namespace SerousBot.Commands.Instances {
 				Logging.Error("ComponentInstaller", $"Failed to install service \"{GetType().Name}\"");
 				Logging.WriteLine(json, Logging.COLOR_ERROR);
 			}
+
+			await PostCommandInstall(client);
 		}
 
 		protected virtual IEnumerable<SlashCommandBuilder> GetGuildCommandBuilders() {
 			yield break;
 		}
+
+		protected virtual async Task PostCommandInstall(DiscordSocketClient client) => await Task.CompletedTask;
 
 		public virtual async Task HandleCommand(SocketSlashCommand command) => await Task.CompletedTask;
 	}

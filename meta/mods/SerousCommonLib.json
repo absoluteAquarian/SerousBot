@@ -1,0 +1,12 @@
+﻿{
+	"name": "absoluteAquarian Utilities (SerousCommonLib)",
+	"authors": [
+		"absoluteAquarian"
+	],
+	"steamid": 2908170107,
+	"dependencies": [
+	],
+	"description": [
+		"This helper library mod contains various utilities that would be useful when developing mods."
+	]
+}

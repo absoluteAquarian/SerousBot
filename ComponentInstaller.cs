@@ -25,6 +25,7 @@ namespace SerousBot {
 			// Guilds are not available until the client is ready
 			await SafelyInstall<BotChannelService>();
 			await SafelyInstall<PasteCommand>();
+			await SafelyInstall<ModCommand>();
 		}
 
 		private async Task SafelyInstall<T>() where T : SerousComponent, new() {
